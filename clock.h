@@ -1,0 +1,16 @@
+void timerInit(void*);
+void interruptInit(void*);
+void IRAM_ATTR onTimer();
+void IRAM_ATTR timeButtonHeld();
+void IRAM_ATTR timeButtonReleased();
+void IRAM_ATTR hourButtonPressedTime();
+void IRAM_ATTR minuteButtonPressedTime();
+void IRAM_ATTR alarmButtonHeld();
+void IRAM_ATTR alarmButtonReleased();
+void IRAM_ATTR hourButtonPressedAlarm();
+void IRAM_ATTR minuteButtonPressedAlarm();
+void alarmCheck(void*);
+void alarmSound(void*);
+void alarmLight(void*);
+void IRAM_ATTR alarmSwitchOff();
+void IRAM_ATTR snooze();
