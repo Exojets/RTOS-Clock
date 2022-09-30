@@ -1,2 +1,0 @@
-# RTOS Clock
-Readme forthcoming.
