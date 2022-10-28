@@ -1,5 +1,16 @@
 #include "RTOSClock.h"
-#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h>
+
+#define timePin 5
+#define hourPin 18
+#define minutePin 19
+#define alarmPin 16
+#define snoozePin 17
+#define switchPin 21
+#define buzzerPin 27
+#define lightPin 33
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 static const uint16_t timer_divider = 80;
 static const uint64_t timer_max = 1000000;
@@ -9,7 +20,6 @@ static TaskHandle_t timer_init_task = NULL, interrupt_init_task = NULL;
 uint16_t hour = 12, minute = 0, second = 0, meridiem = 0, alarm_hour = 12, alarm_minute = 0, alarm_meridiem = 0;
 unsigned long button_time = 0, last_button_time = 0;
 bool alarm_active, alarm_select = false;
-LiquidCrystal lcd(27, 33, 15, 32, 17, 21);
 
 void timerInit(void* parameter){
   timer = timerBegin(0, timer_divider, true);
@@ -26,8 +36,8 @@ void timerInit(void* parameter){
 }
 
 void interruptInit(void* parameter){
-  attachInterrupt(digitalPinToInterrupt(5), timeButtonHeld, RISING);
-  attachInterrupt(digitalPinToInterrupt(16), alarmButtonHeld, RISING);
+  attachInterrupt(digitalPinToInterrupt(timePin), timeButtonHeld, RISING);
+  attachInterrupt(digitalPinToInterrupt(alarmPin), alarmButtonHeld, RISING);
 
   while(1);
 }
@@ -57,10 +67,11 @@ void IRAM_ATTR timeButtonHeld(){
   button_time = millis();
   if (button_time - last_button_time > 250)
   {
-    detachInterrupt(digitalPinToInterrupt(5));
-    attachInterrupt(digitalPinToInterrupt(5), timeButtonReleased, FALLING);
-    attachInterrupt(digitalPinToInterrupt(18), hourButtonPressedTime, RISING);
-    attachInterrupt(digitalPinToInterrupt(19), minuteButtonPressedTime, RISING);
+    detachInterrupt(digitalPinToInterrupt(timePin));
+    attachInterrupt(digitalPinToInterrupt(timePin), timeButtonReleased, FALLING);
+    attachInterrupt(digitalPinToInterrupt(hourPin), hourButtonPressedTime, RISING);
+    attachInterrupt(digitalPinToInterrupt(minutePin), minuteButtonPressedTime, RISING);
+    detachInterrupt(digitalPinToInterrupt(alarmPin));
     last_button_time = button_time;
   }
 }
@@ -69,10 +80,11 @@ void IRAM_ATTR timeButtonReleased(){
   button_time = millis();
   if (button_time - last_button_time > 250)
   {
-    detachInterrupt(digitalPinToInterrupt(5));
-    attachInterrupt(digitalPinToInterrupt(5), timeButtonHeld, RISING);
-    detachInterrupt(digitalPinToInterrupt(18));
-    detachInterrupt(digitalPinToInterrupt(19));
+    detachInterrupt(digitalPinToInterrupt(timePin));
+    attachInterrupt(digitalPinToInterrupt(timePin), timeButtonHeld, RISING);
+    detachInterrupt(digitalPinToInterrupt(hourPin));
+    detachInterrupt(digitalPinToInterrupt(minutePin));
+    attachInterrupt(digitalPinToInterrupt(alarmPin), alarmButtonHeld, RISING);
     if(!timerAlarmEnabled(timer))
       timerAlarmEnable(timer);
     last_button_time = button_time;
@@ -120,10 +132,11 @@ void IRAM_ATTR alarmButtonHeld(){
   if (button_time - last_button_time > 250)
   {
     alarm_select = true;
-    detachInterrupt(digitalPinToInterrupt(16));
-    attachInterrupt(digitalPinToInterrupt(16), alarmButtonReleased, FALLING);
-    attachInterrupt(digitalPinToInterrupt(18), hourButtonPressedAlarm, RISING);
-    attachInterrupt(digitalPinToInterrupt(19), minuteButtonPressedAlarm, RISING);
+    detachInterrupt(digitalPinToInterrupt(alarmPin));
+    attachInterrupt(digitalPinToInterrupt(alarmPin), alarmButtonReleased, FALLING);
+    attachInterrupt(digitalPinToInterrupt(hourPin), hourButtonPressedAlarm, RISING);
+    attachInterrupt(digitalPinToInterrupt(minutePin), minuteButtonPressedAlarm, RISING);
+    detachInterrupt(digitalPinToInterrupt(timePin));
     last_button_time = button_time;
   }
 }
@@ -133,10 +146,11 @@ void IRAM_ATTR alarmButtonReleased(){
   if (button_time - last_button_time > 250)
   {
     alarm_select = false;
-    detachInterrupt(digitalPinToInterrupt(16));
-    attachInterrupt(digitalPinToInterrupt(16), alarmButtonHeld, RISING);
-    detachInterrupt(digitalPinToInterrupt(18));
-    detachInterrupt(digitalPinToInterrupt(19));
+    detachInterrupt(digitalPinToInterrupt(alarmPin));
+    attachInterrupt(digitalPinToInterrupt(alarmPin), alarmButtonHeld, RISING);
+    detachInterrupt(digitalPinToInterrupt(hourPin));
+    detachInterrupt(digitalPinToInterrupt(minutePin));
+    attachInterrupt(digitalPinToInterrupt(timePin), timeButtonHeld, RISING);
     last_button_time = button_time;
   }
 }
@@ -171,12 +185,12 @@ void IRAM_ATTR minuteButtonPressedAlarm(){
 
 void alarmCheck(void* parameter){
   while(1){
-    if(digitalRead(14) == HIGH && hour == alarm_hour && minute == alarm_minute && second == 0 && !alarm_active){
+    if(digitalRead(switchPin) == HIGH && hour == alarm_hour && minute == alarm_minute && second == 0 && !alarm_active){
       alarm_active = true;
       xSemaphoreGive(xSoundSemaphore1);
       xSemaphoreGive(xLightSemaphore1);
-      attachInterrupt(digitalPinToInterrupt(14), alarmSwitchOff, FALLING);
-      attachInterrupt(digitalPinToInterrupt(4), snooze, RISING);
+      attachInterrupt(digitalPinToInterrupt(switchPin), alarmSwitchOff, FALLING);
+      attachInterrupt(digitalPinToInterrupt(snoozePin), snooze, RISING);
     }
     vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
@@ -188,7 +202,7 @@ void alarmSound(void* parameter){
     while(1){
       if(xSemaphoreTake(xSoundSemaphore2, 0) == pdTRUE)
         break;
-      tone(22, 800, 300);
+      tone(buzzerPin, 800, 300);
       vTaskDelay(600 / portTICK_PERIOD_MS);
       if(xSemaphoreTake(xSoundSemaphore3, 0) == pdTRUE)
         if(xSemaphoreTake(xSoundSemaphore2, (300000 / portTICK_PERIOD_MS)) == pdTRUE)
@@ -203,9 +217,9 @@ void alarmLight(void* parameter){
     while(1){
       if(xSemaphoreTake(xLightSemaphore2, 0) == pdTRUE)
         break;
-      digitalWrite(23, HIGH);
+      digitalWrite(lightPin, HIGH);
       vTaskDelay(100 / portTICK_PERIOD_MS);
-      digitalWrite(23, LOW);
+      digitalWrite(lightPin, LOW);
       vTaskDelay(100 / portTICK_PERIOD_MS);
       if(xSemaphoreTake(xLightSemaphore3, 0) == pdTRUE)
         if(xSemaphoreTake(xLightSemaphore2, (300000 / portTICK_PERIOD_MS)) == pdTRUE)
@@ -221,8 +235,8 @@ void IRAM_ATTR alarmSwitchOff(){
     alarm_active = false;
     xSemaphoreGive(xSoundSemaphore2);
     xSemaphoreGive(xLightSemaphore2);
-    detachInterrupt(digitalPinToInterrupt(14));
-    detachInterrupt(digitalPinToInterrupt(4));
+    detachInterrupt(digitalPinToInterrupt(switchPin));
+    detachInterrupt(digitalPinToInterrupt(snoozePin));
     last_button_time = button_time;
   }
 }
@@ -274,7 +288,7 @@ void draw(void* parameter){
       second_string = "00";
     }
     time = String(hour_string + ":" + minute_string + ":" + second_string + " " + meridiem_string);
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     lcd.print(time);
   }
 }
@@ -284,14 +298,15 @@ void setup() {
   pinMode(18, INPUT); //Hour
   pinMode(19, INPUT); //Minute
   pinMode(16, INPUT); //Alarm
-  pinMode(14, INPUT); //Switch
-  pinMode(4, INPUT); //Snooze
-  pinMode(22, OUTPUT); //Buzzer
-  pinMode(23, OUTPUT); //Light
+  pinMode(21, INPUT); //Switch
+  pinMode(17, INPUT); //Snooze
+  pinMode(27, OUTPUT); //Buzzer
+  pinMode(33, OUTPUT); //Light
 
   Serial.begin(115200);
 
-  lcd.begin(11, 1);
+  lcd.init();                      
+  lcd.backlight();
 
   xSoundSemaphore1 = xSemaphoreCreateBinary();
   xSoundSemaphore2 = xSemaphoreCreateBinary();
