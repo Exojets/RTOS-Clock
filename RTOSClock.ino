@@ -1,7 +1,7 @@
-//Author: Ryan Kelly
+// Author: Ryan Kelly
 
-#include "RTOSClock.h" //Function prototypes
-#include <LiquidCrystal_I2C.h>
+#include "RTOSClock.h" // Function prototypes
+#include <LiquidCrystal_I2C.h> // Download at https://github.com/johnrickman/LiquidCrystal_I2C, credit to John Rickman
 
 // GPIO Pins
 static const int timePin = 5, hourPin = 18, minutePin = 19, alarmPin = 16, snoozePin = 17, switchPin = 21, buzzerPin = 27, lightPin = 33;
