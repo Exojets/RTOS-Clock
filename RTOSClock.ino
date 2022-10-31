@@ -7,7 +7,7 @@
 static const int timePin = 5, hourPin = 18, minutePin = 19, alarmPin = 16, snoozePin = 17, switchPin = 21, buzzerPin = 27, lightPin = 33;
 
 // Globals
-LiquidCrystal_I2C lcd(0x27, 16, 2); // L2C LCD screen at address 0x27 with 16 columns and 2 rows
+LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C LCD screen at address 0x27 with 16 columns and 2 rows
 
 static const uint16_t timer_divider = 80; // Timer ticks at 1 MHz
 static const uint64_t timer_max = 1000000; // Timer reaches max once one second has elapsed 
