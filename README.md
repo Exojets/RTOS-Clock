@@ -42,3 +42,6 @@ I completed RTOS Clock as a personal programming project in order to gain an und
 
 ### Instructions
 The pushbuttons are designated, from left to right: time, hour, min, alarm, snooze. To adjust the time, hold down the time button and press the hour and/or min buttons. To adjust the alarm time, hold down the alarm button and press the hour and/or min buttons. The alarm is enabled when the slide switch is in the left position, and disabled when the slide switch is in the right position. Once the alarm is triggered, pressing the snooze button will temporarily disable the alarm for 5 minutes. Switching the slide switch to the right position will disable the alarm indefinitely.
+
+### License
+All code for the content repository is licensed under [MIT](https://github.com/Exojets/RTOSClock/blob/main/LICENSE.txt).
