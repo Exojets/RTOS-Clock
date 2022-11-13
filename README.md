@@ -9,6 +9,8 @@ RTOS Clock is a digital clock program written in C++ using the Arduino IDE and E
 
 I completed RTOS Clock as a personal programming project in order to gain an understanding of software development for real-time operating systems. In the process, I also learned more about building electric circuits.
 
+The source code for this project is contained within the [RTOSClock.ino](https://github.com/Exojets/RTOSClock/blob/main/RTOSClock.ino) file.
+
 ### Physical Components List
 * 1x ESP32 Feather microcontoller
 * 1x 16×2 I2C LCD
@@ -19,7 +21,8 @@ I completed RTOS Clock as a personal programming project in order to gain an und
 * 1x SPDT slide switch
 * 6x 10 kΩ resistors
 * 1x 220 Ω resistor
-* 22 AWG wires
+* 26x Male to Male 22 AWG wires
+* 4x Male to Female 22 AWG wires
 
 ### Installation Guide
 1. Set up the circuit as shown below:
