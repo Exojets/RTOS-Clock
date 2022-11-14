@@ -4,7 +4,7 @@
 #include <LiquidCrystal_I2C.h> // Download at https://github.com/johnrickman/LiquidCrystal_I2C, credit to John Rickman
 
 // GPIO Pins
-static const int timePin = 5, hourPin = 18, minutePin = 19, alarmPin = 16, snoozePin = 17, switchPin = 21, buzzerPin = 27, lightPin = 33;
+static const int timePin = 12, hourPin = 27, minutePin = 33, alarmPin = 15, snoozePin = 32, switchPin = 14, buzzerPin = 4, lightPin = 5;
 
 // Globals
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C LCD screen at address 0x27 with 16 columns and 2 rows
@@ -341,7 +341,7 @@ void setup() {
   pinMode(buzzerPin, OUTPUT);
   pinMode(lightPin, OUTPUT);
 
-  Serial.begin(115200);
+  Serial.begin(115200); // Serial allows for error detection using the serial monitor in the Arduino IDE
 
   lcd.init();                      
   lcd.backlight(); // Turns on the LCD screen's backlight
@@ -356,7 +356,7 @@ void setup() {
   xTaskCreatePinnedToCore(
                           timerInit,
                           "Timer Initialization",
-                          2048,
+                          700,
                           NULL,
                           1,
                           &timer_init_task,
@@ -365,7 +365,7 @@ void setup() {
   xTaskCreatePinnedToCore(
                           interruptInit,
                           "ISR Initialization",
-                          2048,
+                          900,
                           NULL,
                           1,
                           &interrupt_init_task,
@@ -374,7 +374,7 @@ void setup() {
   xTaskCreatePinnedToCore(
                           alarmSound,
                           "Alarm Sound",
-                          2048,
+                          700,
                           NULL,
                           1,
                           NULL,
@@ -383,7 +383,7 @@ void setup() {
   xTaskCreatePinnedToCore(
                           alarmLight,
                           "Alarm Light",
-                          2048,
+                          600,
                           NULL,
                           1,
                           NULL,
@@ -392,7 +392,7 @@ void setup() {
   xTaskCreatePinnedToCore(
                           alarmCheck,
                           "Alarm Check",
-                          2048,
+                          900,
                           NULL,
                           2,
                           NULL,
@@ -401,7 +401,7 @@ void setup() {
   xTaskCreatePinnedToCore(
                           draw,
                           "LCD Draw",
-                          2048,
+                          1700,
                           NULL,
                           1,
                           NULL,
