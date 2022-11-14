@@ -35,11 +35,11 @@ The source code for this project is contained within the [RTOSClock.ino](https:/
 5. Rename the LiquidCrystal_I2C-master folder to LiquidCrystal_I2C.
 6. Move the LiquidCrystal_I2C folder to your Arduino IDE installation "libraries" folder.
 7. Clone this GitHub repository into your Arduino sketchbook folder.
-8. In the cloned RTOSClock folder, open RTOSClock.ino using the Arduino IDE.
-9. Under File->Preferences->Additional Boards Manager URLs, enter the following URL: https://dl.espressif.com/dl/package_esp32_index.json
-10. Under Tools->Board->Board Manager, type "esp32" into the search bar and install the latest version of the esp32 package.
-11. Under Tools->Board->ESP32 Arduino, select "Adafruit ESP32 Feather".
-12. Connect your computer to the Micro-USB port on the ESP32 Feather.
+8. Connect your computer to the Micro-USB port on the ESP32 Feather.
+9. In the cloned RTOSClock folder, open RTOSClock.ino using the Arduino IDE.
+10. Under File->Preferences->Additional Boards Manager URLs, enter the following URL: https://dl.espressif.com/dl/package_esp32_index.json
+11. Under Tools->Board->Board Manager, type "esp32" into the search bar and install the latest version of the esp32 package.
+12. Under Tools->Board->ESP32 Arduino, select "Adafruit ESP32 Feather".
 13. Under Tools->Port, select the port that is connected to the ESP32 Feather (the name shown for the port will vary by system).
 14. Click the upload button.
 
