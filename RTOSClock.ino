@@ -19,7 +19,7 @@ static TaskHandle_t timer_init_task = NULL, interrupt_init_task = NULL;
 
 uint16_t hour = 12, minute = 0, second = 0, meridiem = 0, alarm_hour = 12, alarm_minute = 0, alarm_meridiem = 0;
 unsigned long button_time = 0, last_button_time = 0;
-bool alarm_active, alarm_select = false;
+volatile bool alarm_active, alarm_select = false;
 
 //****************************************************************************************************************************************
 // Functions
