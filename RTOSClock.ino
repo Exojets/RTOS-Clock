@@ -199,9 +199,9 @@ static void interruptInit(void* parameter){
   attachInterrupt(digitalPinToInterrupt(time_pin), timeButton, CHANGE);
   attachInterrupt(digitalPinToInterrupt(alarm_pin), alarmButton, CHANGE);
   attachInterrupt(digitalPinToInterrupt(switch_pin), alarmSwitch, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(snooze_pin), snooze, HIGH);
-  attachInterrupt(digitalPinToInterrupt(hour_pin), hourButtonPressed, HIGH);
-  attachInterrupt(digitalPinToInterrupt(minute_pin), minuteButtonPressed, HIGH);
+  attachInterrupt(digitalPinToInterrupt(snooze_pin), snooze, RISING);
+  attachInterrupt(digitalPinToInterrupt(hour_pin), hourButtonPressed, RISING);
+  attachInterrupt(digitalPinToInterrupt(minute_pin), minuteButtonPressed, RISING);
   
   while(1){
     
